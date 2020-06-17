@@ -1,0 +1,34 @@
+---
+name: ihcph.kk.dk
+site: ihcph
+description: "International House Copenhagen"
+type: private
+language: en-US
+ratelimit: 10
+
+settings:
+  - label: Cookie
+    name: cookie
+    type: text
+
+#Links that can be used, in case we have mirrors.
+links:
+  - https://reservation.frontdesksuite.com/kk
+
+#Our search scheme
+search:
+  method: get
+  path: /reservation/selectTime?pageId=d65d4a3d-ee9a-4a8c-8a2c-a86be76aafac&buttonId=f82be710-17c5-493c-b9a1-ff78c4d8934b&culture=en&uiCulture=en
+  followredirect: true
+  #Search result enumerator
+  rows:
+    selector: ".date:has(.far)"
+
+  #The fields of an entity(search result)
+  fields:
+    title:
+      selector: .title .text
+    times:
+      selector: li.time a
+      attribute: data-time
+      all: true

@@ -9,7 +9,7 @@ Environment variables:
 - `INDEXER` The names of the indexer, by default that's ihcph.kk.dk
 
 ### Supported sites  
-- ihcph.kk.dk - `cityapartment`
+- ihcph.kk.dk - `International House Copenhagen`
   
 You can add new sites in a few ways:
 - Add a new YML file in the `./indexes/` directory

@@ -1,11 +1,12 @@
-module ihcph
+module github.com/sp0x/ihcph
 
 go 1.14
 
 require (
+	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.6.0
-	github.com/sp0x/rented v0.0.0-20200617120257-9a2970305c2e
-	github.com/sp0x/torrentd v0.0.0-20200617120916-0803865945ce
+	github.com/sp0x/torrentd v0.0.0-20200617141054-aeed3369aa0d
+	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 )
