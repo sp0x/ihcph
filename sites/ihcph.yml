@@ -13,22 +13,25 @@ settings:
 
 #Links that can be used, in case we have mirrors.
 links:
-  - https://reservation.frontdesksuite.com/kk
+  #Use the whole url because reservation.frontdesksuite.com returns 404
+  - https://reservation.frontdesksuite.com/kk/reservation/selectTime?pageId=d65d4a3d-ee9a-4a8c-8a2c-a86be76aafac&buttonId=f82be710-17c5-493c-b9a1-ff78c4d8934b&culture=en&uiCulture=en
 
 #Our search scheme
 search:
   method: get
-  path: /reservation/selectTime?pageId=d65d4a3d-ee9a-4a8c-8a2c-a86be76aafac&buttonId=f82be710-17c5-493c-b9a1-ff78c4d8934b&culture=en&uiCulture=en
   followredirect: true
   #Search result enumerator
   rows:
-    selector: ".date:has(.far)"
+    selector: "li.time"
 
   #The fields of an entity(search result)
   fields:
-    title:
-      selector: .title .text
     times:
-      selector: li.time a
+      selector: a
       attribute: data-time
       all: true
+      filters:
+        - name: re_replace
+          args: ["(\\+.*)$", ""]
+        - name: dateparse
+          args: "200601021504"

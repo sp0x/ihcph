@@ -6,7 +6,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.6.0
-	github.com/sp0x/torrentd v0.0.0-20200617141054-aeed3369aa0d
+	github.com/sp0x/torrentd v0.0.0-20200618141142-fd18603d2d79
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 )
