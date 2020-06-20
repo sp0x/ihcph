@@ -12,6 +12,7 @@ NAME=ihcph
 AUTHOR=sp0x
 ARCH=amd64
 OS=linux darwin windows
+SERVICE=ihcph
 
 ifneq ($(origin CI), undefined)
 	WORKDIR := $(GOPATH)/src/github.com/$(NAME)
@@ -45,7 +46,7 @@ test-coverage:
 	$(GOTEST) -coverprofile=$(COVERAGE_REPORT) -coverpkg=./... -covermode=$(COVERAGE_MODE) ./...
 
 build-image:
-	docker-compose build rss
+	docker-compose build $(SERVICE)
 	docker-compose push
 
 benchmark-server:

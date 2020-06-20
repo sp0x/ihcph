@@ -3,8 +3,8 @@ version: "3.7"
 
 services:
 
-  rented:
+  ihcph:
     build:
       context: .
-    image: sp0x/rented
+    image: sp0x/ihcph
     env_file: .env
