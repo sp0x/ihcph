@@ -20,13 +20,16 @@ links:
 search:
   method: get
   followredirect: true
+  key: time
+  #Not necessary since we don't have any inputs to the search. It's assumed it's single paged.
+  #pages: 1
   #Search result enumerator
   rows:
     selector: "li.time"
 
   #The fields of an entity(search result)
   fields:
-    times:
+    time:
       selector: a
       attribute: data-time
       all: true
