@@ -1,0 +1,49 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+orbs:
+  github-release: h-matsuo/github-release@0.1.1
+jobs:
+  build:
+    docker:
+      # specify the version
+      - image: circleci/golang:1.12
+    environment:
+
+    working_directory: /go/src/github.com/sp0x/ihcph
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Install gomock"
+          command: |
+            GO111MODULE=on go get github.com/golang/mock/mockgen@latest
+
+
+      - run:
+          name: "Install dependencies"
+          command: |
+            go get github.com/mitchellh/gox; \
+            go get github.com/konsorten/go-windows-terminal-sequences; \
+            go get github.com/inconshreveable/mousetrap
+      # specify any bash command here prefixed with `run: `
+      - run: go get -v -t -d ./...
+      - run: make test-coverage
+      - run:
+          name: "build binaries"
+          command: |
+            make build-multi-arch;
+            mv ihcph.* artifacts
+      - run:
+          name: "code coverage"
+          command: bash <(curl -s https://codecov.io/bash)
+      - run:
+          name: "Publish release on GitHub"
+          command: |
+            go get github.com/tcnksm/ghr
+            export VERSION=v0.2.0
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+      - store_artifacts:
+          path: ./artifacts
