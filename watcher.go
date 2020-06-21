@@ -14,11 +14,6 @@ import (
 	"strings"
 )
 
-func init() {
-	_ = viper.BindEnv("indexer")
-	_ = viper.BindEnv("telegram_token")
-}
-
 func runWatcher(_ *cobra.Command, args []string) {
 	indexer.Loader = getIndexLoader()
 	//Construct our facade based on the needed indexer.
@@ -42,7 +37,7 @@ func runWatcher(_ *cobra.Command, args []string) {
 //Reads the channel that's the result of watching an indexer.
 func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem) {
 	chatMessagesChannel := make(chan bots.ChatMessage)
-	token := viper.GetString("TELEGRAM_TOKEN")
+	token := viper.GetString("telegram_token")
 	telegram, err := bots.NewTelegram(token, tgbotapi.NewBotAPI)
 	if err != nil {
 		fmt.Printf("Couldn't initialize telegram bot: %v", err)

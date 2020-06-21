@@ -20,9 +20,12 @@ func initConfig(configFile string, appName string) config.ViperConfig {
 		_ = os.MkdirAll(defaultConfigPath, os.ModePerm)
 		viper.AddConfigPath(defaultConfigPath)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(fmt.Sprintf(".%s", appName))
+		viper.SetConfigName(fmt.Sprintf("%s", appName))
 	}
 	viper.AutomaticEnv()
+	if viper.GetBool("verbose") {
+		log.SetLevel(log.DebugLevel)
+	}
 	var appConfig config.ViperConfig
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
@@ -34,11 +37,6 @@ func initConfig(configFile string, appName string) config.ViperConfig {
 		} else {
 			log.Warningf("error while reading config file: %v\n", err)
 		}
-	}
-	if viper.GetBool("verbose") {
-		log.SetLevel(log.DebugLevel)
-	} else {
-
 	}
 	return appConfig
 
