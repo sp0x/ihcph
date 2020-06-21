@@ -19,7 +19,7 @@ ifneq ($(origin CI), undefined)
 endif
 
 build:
-	go build -o rented -ldflags "-s -w" ./
+	go build -o $(NAME) -ldflags "-s -w" ./
 
 assets:
 	@echo "Embedding assets as code"

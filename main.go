@@ -24,10 +24,12 @@ func init() {
 	})
 	flags := rootCmd.PersistentFlags()
 	var verbose bool
-	flags.BoolVarP(&verbose, "verbose", "v", false, "Show more logs")
+	var singleRun bool
+	flags.BoolVarP(&verbose, "verbose", "v", false, "Show more logs.")
 	flags.StringVar(&configFile, "config", "", fmt.Sprintf("The configuration file to use. By default it is ~/.%s/.%s.yaml",
 		appName, appName))
 	flags.StringVarP(&indexSite, "indexer", "x", "ihcph", "The ihcph site to use.")
+	flags.BoolVarP(&singleRun, "single_run", "s", false, "Only checks for results once.")
 	viper.SetDefault("verbose", false)
 	_ = viper.BindPFlag("verbose", flags.Lookup("verbose"))
 	_ = viper.BindEnv("verbose")
@@ -36,6 +38,9 @@ func init() {
 	_ = viper.BindEnv("indexer")
 	viper.SetDefault("telegram_token", "")
 	_ = viper.BindEnv("telegram_token")
+	//Single run config.
+	_ = viper.BindEnv("single_run")
+	_ = viper.BindPFlag("single_run", flags.Lookup("single_run"))
 }
 
 func main() {

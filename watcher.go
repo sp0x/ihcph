@@ -5,16 +5,13 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/indexer"
-	"github.com/sp0x/torrentd/indexer/categories"
 	"github.com/sp0x/torrentd/indexer/search"
-	"github.com/sp0x/torrentd/torznab"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
-	"strings"
 )
 
-func runWatcher(_ *cobra.Command, args []string) {
+func runWatcher(_ *cobra.Command, _ []string) {
 	indexer.Loader = getIndexLoader()
 	//Construct our facade based on the needed indexer.
 	indexerFacade, err := indexer.NewFacade(indexSite, &appConfig)
@@ -26,11 +23,14 @@ func runWatcher(_ *cobra.Command, args []string) {
 		fmt.Printf("Indexer facade was nil")
 		os.Exit(1)
 	}
-	var searchQuery = strings.Join(args, " ")
 	watchIntervalSec := 30
-	query := torznab.ParseQueryString(searchQuery)
-	query.AddCategory(categories.Rental)
-	resultsChan := indexer.Watch(indexerFacade, query, watchIntervalSec)
+	isSingleRun := viper.GetBool("single_run")
+	var resultsChan <-chan search.ExternalResultItem
+	if isSingleRun {
+		resultsChan = indexer.GetAllPagesFromIndex(indexerFacade, nil)
+	} else {
+		resultsChan = indexer.Watch(indexerFacade, nil, watchIntervalSec)
+	}
 	waitForResultsAndBroadcastThem(resultsChan)
 }
 
@@ -69,11 +69,4 @@ func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem
 		}
 
 	}
-
-	//We store them here also, so we have faster access
-	//bolts := storage.BoltStorage{}
-	//_ = bolts.StoreSearchResults(currentSearch.GetResults())
-	//for _, r := range currentSearch.GetResults() {
-	//
-	//}
 }
