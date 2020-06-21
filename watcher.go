@@ -50,23 +50,13 @@ func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem
 		_ = telegram.FeedBroadcast(chatMessagesChannel)
 	}()
 	for result := range resultsChan {
-		//log.Infof("New result: %s\n", result)
 		if result.IsNew() || result.IsUpdate() {
-			price := result.GetField("price")
-			reserved := result.GetField("reserved")
-			if reserved == "true" {
-				reserved = "It's currently reserved"
-			} else {
-				reserved = "And not reserved yet!!!"
-			}
-			msgText := fmt.Sprintf("I found a new property\n"+
-				"[%s](%s)\n"+
-				"*%s* - %s", result.Title, result.Link, price, reserved)
+			link := result.Site
+			availableTime := result.GetField("time")
+			msgText := fmt.Sprintf("I found a new opening at %s:\t%s\n", link, availableTime)
 			message := bots.ChatMessage{Text: msgText, Banner: result.Banner}
 			chatMessagesChannel <- message
-			area := result.Size
-			fmt.Printf("[%s][%d][%s] %s - %s\n", price, area, reserved, result.ResultItem.Title, result.Link)
+			fmt.Printf("Found a new opening: %s", availableTime)
 		}
-
 	}
 }
