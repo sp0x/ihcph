@@ -32,7 +32,7 @@ search:
     time:
       selector: a
       attribute: data-time
-      all: true
+      # all: true # Use this only if `time` is an array field.
       filters:
         - name: re_replace
           args: ["(\\+.*)$", ""]

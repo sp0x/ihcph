@@ -27,3 +27,5 @@ gen
 .env
 db/
 
+#Keys
+keys

@@ -38,13 +38,17 @@ func runWatcher(_ *cobra.Command, _ []string) {
 func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem) {
 	chatMessagesChannel := make(chan bots.ChatMessage)
 	token := viper.GetString("telegram_token")
-	telegram, err := bots.NewTelegram(token, tgbotapi.NewBotAPI)
+	telegram, err := bots.NewTelegram(token, &appConfig, tgbotapi.NewBotAPI)
 	if err != nil {
 		fmt.Printf("Couldn't initialize telegram bot: %v", err)
 		os.Exit(1)
 	}
 	go func() {
-		_ = telegram.Run()
+		err := telegram.Run()
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
 	}()
 	go func() {
 		_ = telegram.FeedBroadcast(chatMessagesChannel)
