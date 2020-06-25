@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"time"
 )
 
 func runWatcher(_ *cobra.Command, _ []string) {
@@ -25,24 +26,46 @@ func runWatcher(_ *cobra.Command, _ []string) {
 	}
 	watchIntervalSec := 30
 	isSingleRun := viper.GetBool("single_run")
+	loadTelegram()
 	var resultsChan <-chan search.ExternalResultItem
 	if isSingleRun {
 		resultsChan = indexer.GetAllPagesFromIndex(indexerFacade, nil)
+		broadcastResults(resultsChan)
 	} else {
 		resultsChan = indexer.Watch(indexerFacade, nil, watchIntervalSec)
+		waitForResultsAndBroadcastThem(resultsChan)
 	}
-	waitForResultsAndBroadcastThem(resultsChan)
+}
+
+var telegram *bots.TelegramRunner
+
+func loadTelegram() {
+	token := viper.GetString("telegram_token")
+	tmpTelegram, err := bots.NewTelegram(token, &appConfig, tgbotapi.NewBotAPI)
+	if err != nil {
+		fmt.Printf("Couldn't initialize telegram bot: %v", err)
+		os.Exit(1)
+	}
+	telegram = tmpTelegram
+}
+
+func broadcastResults(resultsChan <-chan search.ExternalResultItem) {
+	select {
+	case result := <-resultsChan:
+		link := result.Site
+		availableTime := result.GetField("time")
+		msgText := fmt.Sprintf("I found a new opening at %s:\t%s\n", link, availableTime)
+		message := &bots.ChatMessage{Text: msgText, Banner: result.Banner}
+		telegram.Broadcast(message)
+	case <-time.After(10 * time.Second):
+		fmt.Printf("Timed out waiting for result")
+		os.Exit(1)
+	}
 }
 
 //Reads the channel that's the result of watching an indexer.
 func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem) {
 	chatMessagesChannel := make(chan bots.ChatMessage)
-	token := viper.GetString("telegram_token")
-	telegram, err := bots.NewTelegram(token, &appConfig, tgbotapi.NewBotAPI)
-	if err != nil {
-		fmt.Printf("Couldn't initialize telegram bot: %v", err)
-		os.Exit(1)
-	}
 	go func() {
 		err := telegram.Run()
 		if err != nil {

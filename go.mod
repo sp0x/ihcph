@@ -15,7 +15,7 @@ require (
 	github.com/mrobinsn/go-tvmaze v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
-	github.com/sp0x/torrentd v0.3.5
+	github.com/sp0x/torrentd v0.3.6
 	github.com/spf13/afero v1.3.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
