@@ -27,7 +27,7 @@ func runWatcher(_ *cobra.Command, _ []string) {
 	watchIntervalSec := 30
 	isSingleRun := viper.GetBool("single_run")
 	loadTelegram()
-	var resultsChan <-chan search.ExternalResultItem
+	var resultsChan <-chan *search.ExternalResultItem
 	if isSingleRun {
 		resultsChan = indexer.GetAllPagesFromIndex(indexerFacade, nil)
 		broadcastResults(resultsChan)
@@ -49,25 +49,34 @@ func loadTelegram() {
 	telegram = tmpTelegram
 }
 
-func broadcastResults(resultsChan <-chan search.ExternalResultItem) {
+func broadcastResults(resultsChan <-chan *search.ExternalResultItem) {
 	for {
 		select {
 		case result := <-resultsChan:
-			link := result.Site
-			availableTime := result.GetField("time")
-			msgText := fmt.Sprintf("I found a new opening at %s:\t%s\n", link, availableTime)
-			message := &bots.ChatMessage{Text: msgText, Banner: result.Banner}
-			telegram.Broadcast(message)
+			//This signals that our channel has been closed.
+			if result == nil {
+				return
+			}
+			if result.IsNew() || result.IsUpdate() {
+				link := result.Site
+				availableTime := result.GetField("time")
+				if availableTime == "" {
+					continue
+				}
+				msgText := fmt.Sprintf("I found a new opening at %s:\t%s\n", link, availableTime)
+				message := &bots.ChatMessage{Text: msgText, Banner: result.Banner}
+				telegram.Broadcast(message)
+			}
 		case <-time.After(10 * time.Second):
 			fmt.Printf("Timed out waiting for result")
-			os.Exit(1)
+			break
 		}
 	}
 
 }
 
 //Reads the channel that's the result of watching an indexer.
-func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem) {
+func waitForResultsAndBroadcastThem(resultsChan <-chan *search.ExternalResultItem) {
 	chatMessagesChannel := make(chan bots.ChatMessage)
 	go func() {
 		err := telegram.Run()
@@ -80,6 +89,9 @@ func waitForResultsAndBroadcastThem(resultsChan <-chan search.ExternalResultItem
 		_ = telegram.FeedBroadcast(chatMessagesChannel)
 	}()
 	for result := range resultsChan {
+		if result == nil {
+			break
+		}
 		if result.IsNew() || result.IsUpdate() {
 			link := result.Site
 			availableTime := result.GetField("time")

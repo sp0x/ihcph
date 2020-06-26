@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/sp0x/torrentd/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"runtime/pprof"
 )
 
 var appName = "ihcph"
@@ -68,7 +70,16 @@ Currently supported storage backings: boltdb, firebase, sqlite`)
 }
 
 func main() {
-	err := rootCmd.Execute()
+	f, err := os.Create("profile.cpu.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_ = pprof.StartCPUProfile(f)
+	defer func() {
+		pprof.StopCPUProfile()
+	}()
+
+	err = rootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

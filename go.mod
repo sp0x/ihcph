@@ -9,13 +9,14 @@ require (
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/google/pprof v0.0.0-20200626000016-eab82f03b7d2 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/mrobinsn/go-tvmaze v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
-	github.com/sp0x/torrentd v0.3.6
+	github.com/sp0x/torrentd v0.3.7
 	github.com/spf13/afero v1.3.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
