@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"runtime"
 	"runtime/pprof"
 )
 
@@ -74,7 +75,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fMem, err := os.Create("profile.mem.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fMem.Close()
 	_ = pprof.StartCPUProfile(f)
+
 	defer func() {
 		pprof.StopCPUProfile()
 	}()
@@ -83,5 +90,9 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
+	}
+	runtime.GC() //Get latest statistics
+	if err = pprof.WriteHeapProfile(fMem); err != nil {
+		log.Fatal("Couldn't write memory profile: ", err)
 	}
 }
