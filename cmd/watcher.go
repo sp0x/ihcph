@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	main2 "github.com/sp0x/ihcph"
+	"github.com/sp0x/ihcph"
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/indexer"
 	"github.com/sp0x/torrentd/indexer/search"
@@ -13,8 +13,10 @@ import (
 	"time"
 )
 
+var bot *ihcph.BotInterface
+
 func runWatcher(_ *cobra.Command, _ []string) {
-	indexer.Loader = main2.getIndexLoader()
+	indexer.Loader = ihcph.GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
 	indexerFacade, err := indexer.NewFacade(indexSite, &appConfig)
 	if err != nil {
@@ -27,7 +29,7 @@ func runWatcher(_ *cobra.Command, _ []string) {
 	}
 	watchIntervalSec := 30
 	isSingleRun := viper.GetBool("single_run")
-	loadTelegram()
+	bot = loadTelegram()
 	var resultsChan <-chan *search.ExternalResultItem
 	if isSingleRun {
 		resultsChan = indexer.GetAllPagesFromIndex(indexerFacade, nil)
@@ -38,16 +40,14 @@ func runWatcher(_ *cobra.Command, _ []string) {
 	}
 }
 
-var telegram *bots.TelegramRunner
-
-func loadTelegram() {
+func loadTelegram() *ihcph.BotInterface {
 	token := viper.GetString("telegram_token")
 	tmpTelegram, err := bots.NewTelegram(token, &appConfig, tgbotapi.NewBotAPI)
 	if err != nil {
 		fmt.Printf("Couldn't initialize telegram bot: %v", err)
 		os.Exit(1)
 	}
-	telegram = tmpTelegram
+	return &ihcph.BotInterface{Telegram: tmpTelegram}
 }
 
 func broadcastResults(resultsChan <-chan *search.ExternalResultItem) {
@@ -66,28 +66,27 @@ func broadcastResults(resultsChan <-chan *search.ExternalResultItem) {
 				}
 				msgText := fmt.Sprintf("I found a new opening at %s:\t%s\n", link, availableTime)
 				message := &bots.ChatMessage{Text: msgText, Banner: result.Banner}
-				telegram.Broadcast(message)
+				bot.Telegram.Broadcast(message)
 			}
 		case <-time.After(10 * time.Second):
 			fmt.Printf("Timed out waiting for result")
 			break
 		}
 	}
-
 }
 
 //Reads the channel that's the result of watching an indexer.
 func waitForResultsAndBroadcastThem(resultsChan <-chan *search.ExternalResultItem) {
 	chatMessagesChannel := make(chan bots.ChatMessage)
 	go func() {
-		err := telegram.Run()
+		err := bot.Telegram.Run()
 		if err != nil {
 			fmt.Print(err)
 			os.Exit(1)
 		}
 	}()
 	go func() {
-		_ = telegram.FeedBroadcast(chatMessagesChannel)
+		_ = bot.Telegram.FeedBroadcast(chatMessagesChannel)
 	}()
 	for result := range resultsChan {
 		if result == nil {

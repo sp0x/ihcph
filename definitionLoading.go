@@ -1,4 +1,4 @@
-package main
+package ihcph
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func getEmbeddedDefinitionsSource() indexer.DefinitionLoader {
 	return x
 }
 
-func getIndexLoader() *indexer.MultipleDefinitionLoader {
+func GetIndexLoader(appName string) *indexer.MultipleDefinitionLoader {
 	m := &indexer.MultipleDefinitionLoader{
 		getEmbeddedDefinitionsSource(),
 		indexer.NewFsLoader(appName),
