@@ -8,7 +8,7 @@ steps:
       - --entry-point
       - TestRequest
       - --runtime
-      - go13
+      - go113
       - --trigger-http
     env: ['GOPATH=/gopath']
     dir: './'
