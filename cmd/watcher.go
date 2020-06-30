@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	main2 "github.com/sp0x/ihcph"
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/indexer"
 	"github.com/sp0x/torrentd/indexer/search"
@@ -13,7 +14,7 @@ import (
 )
 
 func runWatcher(_ *cobra.Command, _ []string) {
-	indexer.Loader = getIndexLoader()
+	indexer.Loader = main2.getIndexLoader()
 	//Construct our facade based on the needed indexer.
 	indexerFacade, err := indexer.NewFacade(indexSite, &appConfig)
 	if err != nil {

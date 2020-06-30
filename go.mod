@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/andybalholm/cascadia v1.2.0 // indirect
 	github.com/cardigann/go-imdb-scraper v0.0.0-20200425223600-e799a08b1a34 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
@@ -15,7 +16,7 @@ require (
 	github.com/mrobinsn/go-tvmaze v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
-	github.com/sp0x/torrentd v0.3.9
+	github.com/sp0x/torrentd v0.3.10
 	github.com/spf13/afero v1.3.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
