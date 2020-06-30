@@ -10,5 +10,6 @@ steps:
       - --runtime
       - go113
       - --trigger-http
+      - --allow-unauthenticated
     env: ['GOPATH=/gopath']
     dir: './'
