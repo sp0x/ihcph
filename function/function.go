@@ -51,7 +51,11 @@ func init() {
 }
 
 func getConfig() config.Config {
-	return &config.ViperConfig{}
+	c := &config.ViperConfig{}
+	_ = c.Set("storage", "firebase")
+	_ = c.Set("firebase_project", "firebase")
+	_ = c.Set("firebase_credentials_file", "firebase")
+	return c
 }
 
 func loadTelegram(cfg config.Config) *ihcph.BotInterface {
