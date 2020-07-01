@@ -8,11 +8,9 @@ import (
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer"
-	"github.com/sp0x/torrentd/indexer/search"
 	"github.com/spf13/viper"
 	"net/http"
 	"os"
-	"time"
 )
 
 type Result struct {
@@ -66,34 +64,9 @@ func loadTelegram(cfg config.Config) *ihcph.BotInterface {
 	return &ihcph.BotInterface{Telegram: tmpTelegram}
 }
 
-func broadcastResults(resultsChan <-chan *search.ExternalResultItem) {
-	for {
-		select {
-		case result := <-resultsChan:
-			//This signals that our channel has been closed.
-			if result == nil {
-				return
-			}
-			if result.IsNew() || result.IsUpdate() {
-				link := result.Site
-				availableTime := result.GetField("time")
-				if availableTime == "" {
-					continue
-				}
-				msgText := fmt.Sprintf("I found a new opening at %s:\t%s\n", link, availableTime)
-				message := &bots.ChatMessage{Text: msgText, Banner: result.Banner}
-				bot.Telegram.Broadcast(message)
-			}
-		case <-time.After(10 * time.Second):
-			fmt.Printf("Timed out waiting for result")
-			break
-		}
-	}
-}
-
 func TestRequest(w http.ResponseWriter, r *http.Request) {
 	resultsChan := indexer.GetAllPagesFromIndex(indexFacade, nil)
-	broadcastResults(resultsChan)
+	bot.BroadcastResults(resultsChan)
 	body := Body{}
 	body.Message = "Scanned for new results."
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

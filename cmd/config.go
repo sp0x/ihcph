@@ -20,7 +20,7 @@ func initConfig(configFile string, appName string) config.ViperConfig {
 		_ = os.MkdirAll(defaultConfigPath, os.ModePerm)
 		viper.AddConfigPath(defaultConfigPath)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(fmt.Sprintf("%s", appName))
+		viper.SetConfigName(appName)
 	}
 	viper.AutomaticEnv()
 	if viper.GetBool("verbose") {
