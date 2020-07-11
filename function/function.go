@@ -33,8 +33,10 @@ var (
 
 var bot *ihcph.BotInterface
 
+//Cold boot.
 func init() {
 	var err error
+	initConfig()
 	indexer.Loader = ihcph.GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
 	cfg := getConfig()
