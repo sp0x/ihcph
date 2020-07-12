@@ -2,7 +2,7 @@ package function
 
 import "github.com/spf13/viper"
 
-func initConfig() {
+func init() {
 	_ = viper.BindEnv("firebase_project")
 	_ = viper.BindEnv("firebase_credentials")
 	//Chat

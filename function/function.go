@@ -1,15 +1,12 @@
 package function
 
 import (
-	"encoding/json"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/sp0x/ihcph"
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer"
 	"github.com/spf13/viper"
-	"net/http"
 	"os"
 )
 
@@ -27,20 +24,25 @@ const (
 	appName = "ihcph"
 )
 
-var (
-	indexFacade *indexer.Facade
-)
+var initialized = false
+var globalContext *Context
 
-var bot *ihcph.BotInterface
+type Context struct {
+	Bot         *BotInterface
+	IndexFacade *indexer.Facade
+}
 
-//Cold boot.
-func init() {
+//Executed on Cold boot.
+func Initialize() *Context {
 	var err error
-	initConfig()
-	indexer.Loader = ihcph.GetIndexLoader(appName)
+	if initialized {
+		return globalContext
+	}
+	initialized = true
+	indexer.Loader = GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
 	cfg := getConfig()
-	indexFacade, err = indexer.NewFacade("ihcph", cfg)
+	indexFacade, err := indexer.NewFacade("ihcph", cfg)
 	if err != nil {
 		fmt.Printf("Couldn't initialize the named indexer `%s`: %s", "ihcph", err)
 		os.Exit(1)
@@ -49,7 +51,11 @@ func init() {
 		fmt.Printf("Indexer facade was nil")
 		os.Exit(1)
 	}
-	bot = loadTelegram(cfg)
+	context := &Context{}
+	context.Bot = loadTelegram(cfg)
+	context.IndexFacade = indexFacade
+	globalContext = context
+	return context
 }
 
 func getConfig() config.Config {
@@ -60,26 +66,12 @@ func getConfig() config.Config {
 	return c
 }
 
-func loadTelegram(cfg config.Config) *ihcph.BotInterface {
+func loadTelegram(cfg config.Config) *BotInterface {
 	token := viper.GetString("telegram_token")
 	tmpTelegram, err := bots.NewTelegram(token, cfg, tgbotapi.NewBotAPI)
 	if err != nil {
-		fmt.Printf("Couldn't initialize telegram bot: %v", err)
+		fmt.Printf("Couldn't initialize telegram Bot: %v", err)
 		os.Exit(1)
 	}
-	return &ihcph.BotInterface{Telegram: tmpTelegram}
-}
-
-func TestRequest(w http.ResponseWriter, r *http.Request) {
-	resultsChan := indexer.GetAllPagesFromIndex(indexFacade, nil)
-	bot.BroadcastResults(resultsChan)
-	body := Body{}
-	body.Message = "Scanned for new results."
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(Result{
-		200,
-		body.Message,
-		"",
-	})
+	return &BotInterface{Telegram: tmpTelegram}
 }

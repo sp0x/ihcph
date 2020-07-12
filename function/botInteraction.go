@@ -1,4 +1,4 @@
-package ihcph
+package function
 
 import (
 	"fmt"

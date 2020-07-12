@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/sp0x/ihcph"
+	"github.com/sp0x/ihcph/function"
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/indexer"
 	"github.com/sp0x/torrentd/indexer/search"
@@ -13,10 +13,10 @@ import (
 	"time"
 )
 
-var bot *ihcph.BotInterface
+var bot *function.BotInterface
 
 func runWatcher(_ *cobra.Command, _ []string) {
-	indexer.Loader = ihcph.GetIndexLoader(appName)
+	indexer.Loader = function.GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
 	indexerFacade, err := indexer.NewFacade(indexSite, &appConfig)
 	if err != nil {
@@ -40,14 +40,14 @@ func runWatcher(_ *cobra.Command, _ []string) {
 	}
 }
 
-func loadTelegram() *ihcph.BotInterface {
+func loadTelegram() *function.BotInterface {
 	token := viper.GetString("telegram_token")
 	tmpTelegram, err := bots.NewTelegram(token, &appConfig, tgbotapi.NewBotAPI)
 	if err != nil {
 		fmt.Printf("Couldn't initialize telegram bot: %v", err)
 		os.Exit(1)
 	}
-	return &ihcph.BotInterface{Telegram: tmpTelegram}
+	return &function.BotInterface{Telegram: tmpTelegram}
 }
 
 func broadcastResults(resultsChan <-chan *search.ExternalResultItem) {
