@@ -4,9 +4,9 @@ steps:
       - functions
       - deploy
       - testCd
-      - --source=function
+      - --source=.
       - --entry-point
-      - TestRequest
+      - function.TestRequest
       - --runtime
       - go113
       - --trigger-http
