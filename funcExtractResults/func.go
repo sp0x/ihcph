@@ -5,7 +5,6 @@ import (
 	"github.com/sp0x/ihcph/telegram"
 	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer"
-	"github.com/spf13/viper"
 	"os"
 )
 
@@ -41,7 +40,7 @@ func Initialize() *Context {
 		os.Exit(1)
 	}
 	context := &Context{}
-	context.Bot = telegram.GetTelegram(viper.GetString("telegram_token"), cfg)
+	context.Bot = telegram.NewBotInterface()
 	context.IndexFacade = indexFacade
 	globalContext = context
 	return context

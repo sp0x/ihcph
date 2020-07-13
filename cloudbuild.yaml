@@ -6,7 +6,7 @@ steps:
       - testCd
       - --source=.
       - --entry-point
-      - ihcph.funcExtractResults.TestRequest
+      - ExtractResults
       - --runtime
       - go113
       - --trigger-http

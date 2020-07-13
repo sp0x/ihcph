@@ -26,7 +26,7 @@ func NewBotIntegration(w http.ResponseWriter, r *http.Request) {
 	newIntegration := &telegram.Integration{
 		Token: newBot.Token,
 	}
-	err = ctxt.StoreNewIntegration(newIntegration)
+	err = ctxt.Bot.StoreNewIntegration(newIntegration)
 	if err != nil {
 		http.Error(w, "Couldn't save integration", 500)
 		return
