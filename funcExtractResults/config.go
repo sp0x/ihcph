@@ -1,4 +1,4 @@
-package function
+package funcExtractResults
 
 import "github.com/spf13/viper"
 

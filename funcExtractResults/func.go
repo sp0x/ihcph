@@ -1,24 +1,13 @@
-package function
+package funcExtractResults
 
 import (
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/sp0x/torrentd/bots"
+	"github.com/sp0x/ihcph/telegram"
 	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer"
 	"github.com/spf13/viper"
 	"os"
 )
-
-type Result struct {
-	Code    int
-	Message string
-	Token   string
-}
-
-type Body struct {
-	Message string
-}
 
 const (
 	appName = "ihcph"
@@ -28,16 +17,16 @@ var initialized = false
 var globalContext *Context
 
 type Context struct {
-	Bot         *BotInterface
+	Bot         *telegram.BotInterface
 	IndexFacade *indexer.Facade
 }
 
 //Executed on Cold boot.
 func Initialize() *Context {
-	var err error
 	if initialized {
 		return globalContext
 	}
+	var err error
 	initialized = true
 	indexer.Loader = GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
@@ -52,7 +41,7 @@ func Initialize() *Context {
 		os.Exit(1)
 	}
 	context := &Context{}
-	context.Bot = loadTelegram(cfg)
+	context.Bot = telegram.GetTelegram(viper.GetString("telegram_token"), cfg)
 	context.IndexFacade = indexFacade
 	globalContext = context
 	return context
@@ -64,14 +53,4 @@ func getConfig() config.Config {
 	_ = c.Set("firebase_project", "firebase")
 	_ = c.Set("firebase_credentials_file", "firebase")
 	return c
-}
-
-func loadTelegram(cfg config.Config) *BotInterface {
-	token := viper.GetString("telegram_token")
-	tmpTelegram, err := bots.NewTelegram(token, cfg, tgbotapi.NewBotAPI)
-	if err != nil {
-		fmt.Printf("Couldn't initialize telegram Bot: %v", err)
-		os.Exit(1)
-	}
-	return &BotInterface{Telegram: tmpTelegram}
 }

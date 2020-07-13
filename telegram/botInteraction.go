@@ -1,14 +1,26 @@
-package function
+package telegram
 
 import (
 	"fmt"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/sp0x/torrentd/bots"
+	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer/search"
+	"os"
 	"time"
 )
 
 type BotInterface struct {
 	Telegram *bots.TelegramRunner
+}
+
+func GetTelegram(token string, cfg config.Config) *BotInterface {
+	tmpTelegram, err := bots.NewTelegram(token, cfg, tgbotapi.NewBotAPI)
+	if err != nil {
+		fmt.Printf("Couldn't initialize telegram Bot: %v", err)
+		os.Exit(1)
+	}
+	return &BotInterface{Telegram: tmpTelegram}
 }
 
 func (b *BotInterface) BroadcastResults(resultsChan <-chan *search.ExternalResultItem) {

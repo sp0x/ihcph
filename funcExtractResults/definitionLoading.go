@@ -1,4 +1,4 @@
-package function
+package funcExtractResults
 
 import (
 	"fmt"
