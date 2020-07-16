@@ -3,6 +3,7 @@ package ihcph
 import (
 	"encoding/json"
 	"github.com/sp0x/ihcph/funcExtractResults"
+	"github.com/sp0x/ihcph/telegram"
 	"github.com/sp0x/torrentd/indexer"
 	"net/http"
 )
@@ -22,13 +23,14 @@ func ExtractResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fnContext := funcExtractResults.Initialize()
-	botIntegration, err := fnContext.Bot.GetBotIntegration(extractionRequest.BotToken)
+	botInterface := telegram.NewBotInterface()
+	err = botInterface.Initialize(extractionRequest.BotToken)
 	if err != nil {
 		http.Error(w, "error fetching bot", 500)
 		return
 	}
 	resultsChan := indexer.GetAllPagesFromIndex(fnContext.IndexFacade, nil)
-	fnContext.Bot.BroadcastResults(botIntegration, resultsChan)
+	botInterface.BroadcastResults(resultsChan)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

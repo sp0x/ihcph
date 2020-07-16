@@ -2,7 +2,6 @@ package funcExtractResults
 
 import (
 	"fmt"
-	"github.com/sp0x/ihcph/telegram"
 	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer"
 	"os"
@@ -16,7 +15,7 @@ var initialized = false
 var globalContext *Context
 
 type Context struct {
-	Bot         *telegram.BotInterface
+	//Bot         *telegram.BotInterface
 	IndexFacade *indexer.Facade
 }
 
@@ -40,7 +39,7 @@ func Initialize() *Context {
 		os.Exit(1)
 	}
 	context := &Context{}
-	context.Bot = telegram.NewBotInterface()
+	//context.Bot = telegram.NewBotInterface()
 	context.IndexFacade = indexFacade
 	globalContext = context
 	return context

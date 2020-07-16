@@ -14,6 +14,7 @@ import (
 
 type BotInterface struct {
 	Firestore *firestore.Client
+	bot       *bots.TelegramRunner
 }
 
 func NewBotInterface() *BotInterface {
@@ -26,12 +27,9 @@ func NewBotInterface() *BotInterface {
 	return b
 }
 
-func (b *BotInterface) BroadcastResults(integration *Integration, resultsChan <-chan *search.ExternalResultItem) {
+func (b *BotInterface) BroadcastResults(resultsChan <-chan *search.ExternalResultItem) {
 	for {
-		telegram, err := bots.NewTelegram(integration.Token, &config.ViperConfig{}, tgbotapi.NewBotAPI)
-		if err != nil {
-			panic(err)
-		}
+		telegram := b.bot
 		select {
 		case result := <-resultsChan:
 			//This signals that our channel has been closed.
@@ -62,7 +60,7 @@ func (b *BotInterface) StoreNewIntegration(integration *Integration) error {
 	ctx := context.Background()
 	existing, err := newDoc.Get(ctx)
 	if existing != nil {
-		return nil
+		return existing.DataTo(integration)
 	}
 	integration.Id = newDoc.ID
 	_, err = newDoc.Create(ctx, integration)
@@ -84,4 +82,21 @@ func (b *BotInterface) GetBotIntegration(token string) (*Integration, error) {
 		return nil, err
 	}
 	return &ign, nil
+}
+
+func (b *BotInterface) Initialize(token string) error {
+	integration, err := b.GetBotIntegration(token)
+	if err != nil {
+		return err
+	}
+	bot, err := bots.NewTelegram(integration.Token, &config.ViperConfig{}, tgbotapi.NewBotAPI)
+	if err != nil {
+		return err
+	}
+	b.bot = bot
+	return nil
+}
+
+func (b *BotInterface) GetBot() *bots.TelegramRunner {
+	return b.bot
 }

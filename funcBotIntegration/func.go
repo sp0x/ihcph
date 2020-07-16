@@ -35,5 +35,7 @@ func Initialize() *Context {
 	}
 	ctxt.Firebase = fbase
 	ctxt.ctx = context.Background()
+	ctxt.Bot = telegram.NewBotInterface()
+	globalContext = ctxt
 	return ctxt
 }
