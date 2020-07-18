@@ -54,7 +54,7 @@ Currently supported storage backings: boltdb, firebase, sqlite`)
 	//Storage config
 	_ = viper.BindPFlag("storage", flags.Lookup("storage"))
 	_ = viper.BindEnv("storage")
-	//Firebase related
+	//Firestore related
 	_ = viper.BindPFlag("firebase_project", flags.Lookup("firebase_project"))
 	_ = viper.BindEnv("firebase_project")
 	_ = viper.BindPFlag("firebase_credentials_file", flags.Lookup("firebase_credentials_file"))

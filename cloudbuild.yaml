@@ -6,7 +6,7 @@ steps:
       - testCd
       - --source=.
       - --entry-point
-      - TestRequest
+      - ExtractResults
       - --runtime
       - go113
       - --trigger-http

@@ -1,4 +1,4 @@
-package ihcph
+package funcExtractResults
 
 import (
 	"fmt"
