@@ -47,7 +47,7 @@ func (b *BotInterface) BroadcastResults(resultsChan <-chan *search.ExternalResul
 			}
 		case <-time.After(10 * time.Second):
 			fmt.Printf("Timed out waiting for result")
-			break
+			return
 		}
 	}
 }

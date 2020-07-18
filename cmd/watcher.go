@@ -76,7 +76,7 @@ func broadcastResults(resultsChan <-chan *search.ExternalResultItem) {
 			}
 		case <-time.After(10 * time.Second):
 			fmt.Printf("Timed out waiting for result")
-			break
+			return
 		}
 	}
 }
