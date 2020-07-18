@@ -9,7 +9,7 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/funcExtractResults/method", ihcph.TestRequest)
+	r.HandleFunc("/extract", ihcph.ExtractResults)
 	s := &http.Server{
 		Addr:    ":8089",
 		Handler: r,

@@ -3,12 +3,12 @@ package common
 import (
 	"cloud.google.com/go/firestore"
 	"context"
-	"github.com/spf13/viper"
 	"google.golang.org/api/option"
 )
 
 func NewFirebaseFromEnv() (*firestore.Client, error) {
-	return NewFirebase(viper.GetString("firebase_project"), viper.GetString("firebase_credentials"))
+	c := GetFirebaseConfig()
+	return NewFirebase(c.Project, c.Credentials)
 }
 
 func NewFirebase(projectId string, credentialsFile string) (*firestore.Client, error) {

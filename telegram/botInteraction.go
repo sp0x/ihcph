@@ -7,7 +7,6 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/sp0x/ihcph/common"
 	"github.com/sp0x/torrentd/bots"
-	"github.com/sp0x/torrentd/config"
 	"github.com/sp0x/torrentd/indexer/search"
 	"time"
 )
@@ -89,7 +88,7 @@ func (b *BotInterface) Initialize(token string) error {
 	if err != nil {
 		return err
 	}
-	bot, err := bots.NewTelegram(integration.Token, &config.ViperConfig{}, tgbotapi.NewBotAPI)
+	bot, err := bots.NewTelegram(integration.Token, common.GetConfig(), tgbotapi.NewBotAPI)
 	if err != nil {
 		return err
 	}

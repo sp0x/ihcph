@@ -2,7 +2,7 @@ package funcExtractResults
 
 import (
 	"fmt"
-	"github.com/sp0x/torrentd/config"
+	"github.com/sp0x/ihcph/common"
 	"github.com/sp0x/torrentd/indexer"
 	"os"
 )
@@ -15,7 +15,6 @@ var initialized = false
 var globalContext *Context
 
 type Context struct {
-	//Bot         *telegram.BotInterface
 	IndexFacade *indexer.Facade
 }
 
@@ -26,9 +25,11 @@ func Initialize() *Context {
 	}
 	var err error
 	initialized = true
+	common.BindConfig()
+	cfg := common.GetConfig()
 	indexer.Loader = GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
-	cfg := getConfig()
+
 	indexFacade, err := indexer.NewFacade("ihcph", cfg)
 	if err != nil {
 		fmt.Printf("Couldn't initialize the named indexer `%s`: %s", "ihcph", err)
@@ -39,16 +40,8 @@ func Initialize() *Context {
 		os.Exit(1)
 	}
 	context := &Context{}
-	//context.Bot = telegram.NewBotInterface()
+	//context.Bots = telegram.NewBotInterface()
 	context.IndexFacade = indexFacade
 	globalContext = context
 	return context
-}
-
-func getConfig() config.Config {
-	c := &config.ViperConfig{}
-	_ = c.Set("storage", "firebase")
-	_ = c.Set("firebase_project", "firebase")
-	_ = c.Set("firebase_credentials_file", "firebase")
-	return c
 }

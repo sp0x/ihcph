@@ -5,6 +5,7 @@ import (
 	"github.com/sp0x/ihcph/funcExtractResults"
 	"github.com/sp0x/ihcph/telegram"
 	"github.com/sp0x/torrentd/indexer"
+	"github.com/sp0x/torrentd/indexer/search"
 	"net/http"
 )
 
@@ -13,6 +14,7 @@ type ExtractionRequest struct {
 }
 
 type ExtractionResponse struct {
+	Items []string `json:"items"`
 }
 
 func ExtractResults(w http.ResponseWriter, r *http.Request) {
@@ -30,9 +32,17 @@ func ExtractResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resultsChan := indexer.GetAllPagesFromIndex(fnContext.IndexFacade, nil)
-	botInterface.BroadcastResults(resultsChan)
-
+	proxyChan := make(chan *search.ExternalResultItem)
+	go botInterface.BroadcastResults(proxyChan)
+	response := ExtractionResponse{Items: []string{}}
+	for result := range resultsChan {
+		proxyChan <- result
+		if result == nil {
+			break
+		}
+		response.Items = append(response.Items, result.Title)
+	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(ExtractionResponse{})
+	_ = json.NewEncoder(w).Encode(response)
 }
