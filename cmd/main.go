@@ -64,31 +64,12 @@ Currently supported storage backings: boltdb, firebase, sqlite`)
 	_ = viper.BindEnv("telegram_token")
 	viper.SetDefault("chat_db", "./db/chats.db")
 	_ = viper.BindEnv("chat_db")
-
 }
 
 func main() {
-	//f, err := os.Create("profile.cpu.prof")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//fMem, err := os.Create("profile.mem.prof")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//defer fMem.Close()
-	//_ = pprof.StartCPUProfile(f)
-	//
-	//defer func() {
-	//	pprof.StopCPUProfile()
-	//}()
 	err := rootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	//runtime.GC() //Get latest statistics
-	//if err = pprof.WriteHeapProfile(fMem); err != nil {
-	//	log.Fatal("Couldn't write memory profile: ", err)
-	//}
 }

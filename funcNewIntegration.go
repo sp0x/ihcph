@@ -2,7 +2,6 @@ package ihcph
 
 import (
 	"encoding/json"
-	"github.com/sp0x/ihcph/funcBotIntegration"
 	"github.com/sp0x/ihcph/telegram"
 	"net/http"
 )
@@ -22,11 +21,11 @@ func NewBotIntegration(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Couldn't decode body", 400)
 		return
 	}
-	ctxt := funcBotIntegration.Initialize()
 	newIntegration := &telegram.Integration{
 		Token: newBot.Token,
 	}
-	err = ctxt.Bots.StoreNewIntegration(newIntegration)
+	bot := telegram.NewBotInterface()
+	err = bot.StoreNewIntegration(newIntegration)
 	if err != nil {
 		http.Error(w, "Couldn't save integration", 500)
 		return
