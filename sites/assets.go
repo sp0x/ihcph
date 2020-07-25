@@ -62,7 +62,7 @@ func gzipBindataSitesAssetsgo() (*gzipAsset, error) {
 		size:        0,
 		md5checksum: "",
 		mode:        os.FileMode(511),
-		modTime:     time.Unix(1595090913, 0),
+		modTime:     time.Unix(1595660501, 0),
 	}
 
 	a := &gzipAsset{bytes: bytes, info: info}
@@ -103,7 +103,7 @@ func gzipBindataSitesIhcphyml() (*gzipAsset, error) {
 		size:        1068,
 		md5checksum: "",
 		mode:        os.FileMode(511),
-		modTime:     time.Unix(1595085626, 0),
+		modTime:     time.Unix(1595091809, 0),
 	}
 
 	a := &gzipAsset{bytes: bytes, info: info}

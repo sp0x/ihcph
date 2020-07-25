@@ -18,7 +18,7 @@ ifneq ($(origin CI), undefined)
 	WORKDIR := $(GOPATH)/src/github.com/$(NAME)
 endif
 
-build:
+build: assets
 	go build -o $(NAME) -ldflags "-s -w" ./
 
 assets:
