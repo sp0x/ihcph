@@ -9,9 +9,11 @@ require (
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/go-playground/validator/v10 v10.3.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+	github.com/gogo/protobuf v1.2.1
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/gorilla/mux v1.7.4
 	github.com/json-iterator/go v1.1.10 // indirect
+	github.com/lileio/pubsub v0.0.0-20190923214451-d1c628de58cb
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/mrobinsn/go-tvmaze v1.2.1 // indirect
