@@ -2,6 +2,7 @@ package funcExtractResults
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/sp0x/ihcph/common"
 	"github.com/sp0x/torrentd/indexer"
 	"os"
@@ -25,6 +26,7 @@ func Initialize() *Context {
 	}
 	var err error
 	initialized = true
+	log.SetLevel(log.InfoLevel)
 	common.BindConfig()
 	cfg := common.GetConfig()
 	indexer.Loader = GetIndexLoader(appName)

@@ -8,6 +8,8 @@ import (
 	"github.com/sp0x/ihcph/common"
 	"github.com/sp0x/torrentd/bots"
 	"github.com/sp0x/torrentd/indexer/search"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"time"
 )
 
@@ -58,12 +60,17 @@ func (b *BotInterface) StoreNewIntegration(integration *Integration) error {
 	newDoc := nsbots.Doc(integration.Token)
 	ctx := context.Background()
 	existing, err := newDoc.Get(ctx)
-	if existing != nil {
-		return existing.DataTo(integration)
+	if err != nil {
+		errCode := grpc.Code(err)
+		if errCode != codes.NotFound {
+			return err
+		} else if errCode == codes.NotFound {
+			integration.Id = newDoc.ID
+			_, err = newDoc.Create(ctx, integration)
+			return err
+		}
 	}
-	integration.Id = newDoc.ID
-	_, err = newDoc.Create(ctx, integration)
-	return err
+	return existing.DataTo(integration)
 }
 
 func (b *BotInterface) GetBotIntegration(token string) (*Integration, error) {

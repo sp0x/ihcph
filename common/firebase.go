@@ -7,7 +7,10 @@ import (
 )
 
 func NewFirebaseFromEnv() (*firestore.Client, error) {
-	c := GetFirebaseConfig()
+	c, err := GetFirebaseConfig()
+	if err != nil {
+		return nil, err
+	}
 	return NewFirebase(c.Project, c.Credentials)
 }
 
