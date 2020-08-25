@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-var bot *telegram.BotInterface
-
 func runWatcher(_ *cobra.Command, _ []string) {
 	indexer.Loader = funcExtractResults.GetIndexLoader(appName)
 	//Construct our facade based on the needed indexer.
@@ -31,7 +29,7 @@ func runWatcher(_ *cobra.Command, _ []string) {
 	}
 	watchIntervalSec := 30
 	isSingleRun := viper.GetBool("single_run")
-	bot = loadTelegram()
+	loadTelegram()
 	var resultsChan <-chan *search.ExternalResultItem
 	if isSingleRun {
 		resultsChan = indexer.GetAllPagesFromIndex(indexerFacade, nil)
@@ -43,12 +41,6 @@ func runWatcher(_ *cobra.Command, _ []string) {
 }
 
 func loadTelegram() *telegram.BotInterface {
-	//token := viper.GetString("telegram_token")
-	//tmpTelegram, err := bots.NewTelegram(token, &appConfig, tgbotapi.NewBotAPI)
-	//if err != nil {
-	//	fmt.Printf("Couldn't initialize telegram bot: %v", err)
-	//	os.Exit(1)
-	//}
 	return telegram.NewBotInterface()
 }
 
